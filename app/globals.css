@@ -24,3 +24,19 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+nav {
+  @apply flex items-center justify-between px-6 py-4 bg-gray-100 dark:bg-gray-900 shadow-md rounded-lg my-6;
+}
+
+nav .nav-logo {
+  @apply text-2xl font-bold text-gray-900 dark:text-gray-100;
+}
+
+nav .nav-links {
+  @apply flex gap-6;
+}
+
+nav .nav-link {
+  @apply text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium;
+}
