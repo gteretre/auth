@@ -10,3 +10,12 @@ export interface Author {
   bio?: string;
   role?: string;
 }
+
+export interface Task {
+  title: string;
+  description: string;
+  status: "todo" | "in-progress" | "done";
+  authorUsername: string;
+  boardId: string;
+  id?: string; // Optional, for client-side usage
+}

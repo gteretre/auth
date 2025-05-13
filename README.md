@@ -1,36 +1,121 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kanban – aplikacja do zarządzania zadaniami
 
-## Getting Started
+Autorzy projektu: Michał Kowalski, Eryk Tucki
 
-First, run the development server:
+## Technologie i konfiguracja
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Next.js** – Framework do budowy aplikacji React z obsługą SSR/SSG.
+- **TypeScript** – Typowanie statyczne.
+- **Tailwind CSS** – Utility-first CSS framework.
+- **MongoDB** – Baza danych NoSQL.
+- **NextAuth.js** – Obsługa logowania przez GitHub, Google, Microsoft.
+
+## Autoryzacja i uwierzytelnianie
+
+Aplikacja obsługuje logowanie przez:
+
+- GitHub
+- Google
+- Microsoft (Azure AD)
+
+Przykład przycisków logowania:
+
+```
+<Tooltip text="Zaloguj się z GitHub" position="left">
+  <button onClick={() => signIn("github")}>...</button>
+</Tooltip>
+<Tooltip text="Zaloguj się z Google" position="left">
+  <button onClick={() => signIn("google")}>...</button>
+</Tooltip>
+<Tooltip text="Zaloguj się z Microsoft" position="left">
+  <button onClick={() => signIn("azure-ad")}>...</button>
+</Tooltip>
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Funkcjonalności aplikacji
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Kanban** – Zarządzanie tablicami i zadaniami.
+- Tworzenie, edycja, usuwanie tablic i zadań.
+- Przeciąganie zadań między kolumnami (todo, in-progress, done).
+- Przykładowe zadania po utworzeniu tablicy:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+const demoTasks = [
+  { title: "Przykładowe zadanie 1", description: "...", status: "todo", ... },
+  { title: "Przykładowe zadanie 2", description: "...", status: "in-progress", ... },
+  { title: "Przykładowe zadanie 3", description: "...", status: "done", ... }
+];
+```
 
-## Learn More
+## Struktura projektu
 
-To learn more about Next.js, take a look at the following resources:
+- `app/` – Główne strony i API (Next.js App Router)
+- `components/` – Komponenty UI (Navbar, Footer, AuthButtons, Board, Card, Tooltip, UIMode)
+- `lib/` – Logika biznesowa, modele, zapytania do bazy, mutacje
+- `public/` – Pliki statyczne
+- `tailwind.config.ts`, `postcss.config.mjs` – Konfiguracja stylów
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Przykładowe fragmenty UI
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Navbar** – Nawigacja z przyciskami do planów, profilu, trybu kolorów:
 
-## Deploy on Vercel
+```
+<Tooltip text="Moje plany" position="left">
+  <Link href="/plan"><span><KanbanIcon /></span></Link>
+</Tooltip>
+<SignOutButton />
+<Tooltip text={`Profil użytkownika ${session.user.username}`} position="left">
+  <Link href={`/user/${session.user.username}`}><span><User /></span></Link>
+</Tooltip>
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Tryb jasny/ciemny** – Przełącznik motywu:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+function UIMode() { /* ... */ }
+```
+
+## Język polski
+
+Interfejs użytkownika, komunikaty i przykładowe zadania są w języku polskim.
+
+Przykład strony 404:
+
+```
+<h1 className="mb-4 text-4xl font-bold text-primary">
+  404 - Strona nie istnieje
+</h1>
+<p className="mb-8 text-lg text-gray-500">
+  Przykro nam, strona której szukasz została przeniesiona lub nie istnieje.
+</p>
+<Link href="/" className="search-btn rounded-full px-6 py-2">
+  Wróć do strony głównej
+</Link>
+```
+
+## Plik konfiguracyjny środowiska
+
+Wymagane zmienne środowiskowe w `.env.local`:
+
+- `MONGODB_URI`
+- `MONGODB_DB`
+- `AUTH_GITHUB_ID`
+- `AUTH_GITHUB_SECRET`
+- `AUTH_GOOGLE_ID`
+- `AUTH_GOOGLE_SECRET`
+- `AUTH_AZURE_AD_ID`
+- `AUTH_AZURE_AD_SECRET`
+- `AUTH_AZURE_AD_TENANT`
+
+---
+
+Aby uruchomić projekt:
+
+1. Sklonuj repozytorium.
+2. Zainstaluj zależności: `npm install`
+3. Skonfiguruj plik `.env.local` według powyższych zmiennych.
+4. Uruchom aplikację: `npm run dev`
+
+---
+
+Projekt stworzony w celach edukacyjnych. Wszystkie przykłady i fragmenty kodu mają charakter poglądowy.

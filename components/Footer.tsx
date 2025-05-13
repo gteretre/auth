@@ -7,7 +7,7 @@ function Footer() {
       <div className="mx-auto flex w-full flex-row justify-between">
         <div className="pointer-events-none flex items-center gap-2">
           <span className="font-semibold">
-            © Michał Kowalski, Oskar Stelmach {new Date().getFullYear()}
+            © Michał Kowalski, Eryk Tucki {new Date().getFullYear()}
           </span>
         </div>
       </div>

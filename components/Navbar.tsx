@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Pencil, User } from "lucide-react";
+import { KanbanIcon, Pencil, User } from "lucide-react";
 
 import Tooltip from "./Tooltip";
 import UIMode from "@/components/UIMode";
@@ -28,7 +28,7 @@ const Navbar = async () => {
                       letterSpacing: "-0.5px"
                     }}
                   >
-                    Wiadomości
+                    Kanban
                   </span>
                 </span>
               </Link>
@@ -40,10 +40,17 @@ const Navbar = async () => {
           <div id="navbar-text" className="flex items-center gap-2">
             {session && session.user ? (
               <>
-                <Tooltip text="Pisz" position="left">
-                  <Link href="/">
+                <Tooltip text="Nowy" position="left">
+                  <Link href="/plan/create">
                     <span>
                       <Pencil />
+                    </span>
+                  </Link>
+                </Tooltip>
+                <Tooltip text="Moje plany" position="left">
+                  <Link href="/plan">
+                    <span>
+                      <KanbanIcon />
                     </span>
                   </Link>
                 </Tooltip>
