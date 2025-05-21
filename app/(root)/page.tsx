@@ -1,14 +1,26 @@
 import React from "react";
+import { auth } from "@/lib/auth";
+import Link from "next/link";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await auth();
   return (
-    <div className="flex min-h-[calc(100vh-theme(spacing.16))] flex-1 flex-col items-center justify-center p-4">
+    <div className="flex flex-1 flex-col items-center justify-center p-4">
       <main className="container mx-auto flex flex-col items-center justify-center text-center">
-        <h1 className="mb-4 text-4xl font-extrabold tracking-tight text-primary lg:text-5xl">
-          Cześć, pisz prywatne wiadomości i nie wiem...
-        </h1>
-        <p className="mb-8 text-lg text-muted-foreground">Jakiś inny tekst.</p>
-        <div className="space-x-4">czesc</div>
+        {session ? (
+          <>
+            <h1 className="mb-4 text-4xl font-extrabold tracking-tight text-primary lg:text-5xl">
+              Przejdź do wiadomości
+            </h1>
+            <Link href="/messages">Wiadomości</Link>
+          </>
+        ) : (
+          <>
+            <h1 className="mb-4 text-4xl font-extrabold tracking-tight text-primary lg:text-5xl">
+              Zaloguj się, aby wysyłać prywatne wiadomości
+            </h1>
+          </>
+        )}
       </main>
     </div>
   );

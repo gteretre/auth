@@ -152,3 +152,117 @@
       0 2px 16px #a78bfa55,
       0 1px 4px #ec489955;
   }
+
+/* App Shell Layout */
+.app-shell {
+  @apply flex flex-col min-h-screen bg-background text-foreground font-sans;
+  min-height: 100vh;
+  height: 100dvh;
+}
+.app-main-content {
+  @apply flex-1 flex flex-col items-center justify-center w-full max-w-3xl mx-auto px-2 py-4 overflow-y-auto;
+}
+
+/* Card/Panel Styles */
+.card {
+  @apply bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-800 p-0 sm:p-2 md:p-4;
+}
+
+/* Header Styles */
+.card-header {
+  @apply flex items-center gap-4 border-b border-gray-200 dark:border-gray-700 px-4 py-3 bg-gradient-to-r from-blue-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 rounded-t-2xl;
+}
+.card-header-avatar {
+  @apply rounded-full object-cover w-12 h-12;
+}
+.card-header-info {
+  @apply flex flex-col;
+}
+.card-header-title {
+  @apply font-semibold text-lg truncate;
+}
+.card-header-subtitle {
+  @apply text-xs text-gray-500 truncate;
+}
+
+/* Chat Bubble Styles */
+.chat-bubble {
+  @apply rounded-2xl px-4 py-2 max-w-xs break-words shadow-sm;
+}
+.chat-bubble-me {
+  @apply bg-blue-600 text-white ml-2;
+}
+.chat-bubble-other {
+  @apply bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100 mr-2;
+}
+.chat-bubble-meta {
+  @apply text-[10px] mt-1 text-blue-100 dark:text-blue-200;
+}
+.chat-bubble-meta-other {
+  @apply text-gray-500 dark:text-gray-400;
+}
+
+/* Chat Input Area */
+.chat-input-area {
+  @apply flex gap-2 px-3 py-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 sticky bottom-0 rounded-b-2xl;
+}
+.chat-input {
+  @apply flex-1 px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-100 dark:bg-gray-800 text-sm;
+}
+.chat-send-btn {
+  @apply px-4 py-2 rounded-md bg-blue-600 text-white font-semibold disabled:bg-blue-300 transition shadow;
+}
+
+/* Thread List Styles */
+.thread-list {
+  @apply flex-1 min-h-0 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-2xl bg-gray-50 dark:bg-gray-900 p-2;
+}
+.thread-list-item {
+  @apply flex items-center border border-gray-200 dark:border-gray-700 rounded-xl p-3 mb-3 bg-white dark:bg-gray-950 hover:bg-blue-50 dark:hover:bg-gray-800 cursor-pointer transition;
+}
+.thread-list-item.selected {
+  @apply border-blue-600;
+}
+.thread-list-avatar {
+  @apply w-10 h-10 rounded-full mr-4 object-cover;
+}
+.thread-list-info {
+  @apply flex-1;
+}
+.thread-list-title {
+  @apply no-underline text-gray-900 dark:text-gray-100 font-semibold text-lg;
+}
+.thread-list-subtitle {
+  @apply text-xs text-gray-500;
+}
+.thread-list-last-message {
+  @apply text-xs text-gray-700 dark:text-gray-300 mt-1 truncate;
+}
+.thread-delete-btn {
+  @apply ml-2 px-3 py-1 rounded bg-red-50 dark:bg-gray-800 border border-red-200 dark:border-gray-700 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-gray-700 transition;
+}
+
+/* Dropdown Styles */
+.user-dropdown {
+  @apply absolute left-0 right-0 bg-white dark:bg-gray-900 border border-t-0 border-gray-300 dark:border-gray-700 z-10 max-h-56 overflow-y-auto mt-1 rounded-b-md shadow;
+}
+.user-dropdown-item {
+  @apply flex items-center px-3 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800;
+}
+.user-dropdown-avatar {
+  @apply w-8 h-8 rounded-full mr-2 object-cover;
+}
+.user-dropdown-info {
+  @apply flex flex-col;
+}
+.user-dropdown-title {
+  @apply font-medium;
+}
+.user-dropdown-subtitle {
+  @apply text-xs text-gray-500;
+}
+
+/* Utility */
+.centered-section {
+  @apply flex flex-col items-center justify-center w-full;
+}

@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb";
 import { getDb } from "./mongodb";
+import { Thread, Message } from "./models";
 
 type RawAuthor = {
   _id: string | ObjectId;
@@ -85,4 +86,40 @@ export async function getAuthorByUsername(
       `Error in getAuthorByUsername: ${error instanceof Error ? error.message : String(error)}`
     );
   }
+}
+
+export async function getThreadsForUser(username: string): Promise<Thread[]> {
+  const db = await getDb();
+  const author = await getAuthorByUsername(username);
+  if (!author) return [];
+  const threads = await db
+    .collection("threads")
+    .find({ userIds: author._id })
+    .sort({ createdAt: -1 })
+    .toArray();
+  return threads.map((t: any) => ({
+    _id: t._id.toString(),
+    userIds: t.userIds,
+    createdAt:
+      t.createdAt instanceof Date ? t.createdAt : new Date(t.createdAt),
+    lastMessage: t.lastMessage || ""
+  }));
+}
+
+export async function getMessagesForThread(
+  threadId: string
+): Promise<Message[]> {
+  const db = await getDb();
+  const messages = await db
+    .collection("messages")
+    .find({ threadId })
+    .sort({ createdAt: 1 })
+    .toArray();
+  return messages.map((m: any) => ({
+    _id: m._id.toString(),
+    threadId: m.threadId,
+    authorId: m.authorId,
+    content: m.content,
+    createdAt: m.createdAt instanceof Date ? m.createdAt : new Date(m.createdAt)
+  }));
 }

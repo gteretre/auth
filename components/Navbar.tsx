@@ -40,19 +40,16 @@ const Navbar = async () => {
           <div id="navbar-text" className="flex items-center gap-2">
             {session && session.user ? (
               <>
-                <Tooltip text="Pisz" position="left">
-                  <Link href="/">
+                <Tooltip text="Wiadomości" position="left">
+                  <Link href="/messages">
                     <span>
                       <Pencil />
                     </span>
                   </Link>
                 </Tooltip>
                 <SignOutButton />
-                <Tooltip
-                  text={`Profil użytkownika ${session.user.username}`}
-                  position="left"
-                >
-                  <Link href={`/user/${session.user.username}`}>
+                <Tooltip text={`Profil`} position="left">
+                  <Link href={`/profile`}>
                     <span>
                       <User />
                     </span>

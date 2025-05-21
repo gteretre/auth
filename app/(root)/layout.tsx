@@ -5,12 +5,10 @@ export default function Layout({
   children
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <main className="font-work-sans flex min-h-screen flex-col">
-      <div className="mx-auto w-full flex-1">
-        <Navbar />
-        <div className="mx-auto w-full max-w-[1600px]">{children}</div>
-      </div>
+    <div className="app-shell">
+      <Navbar />
+      <main className="app-main-content">{children}</main>
       <Footer />
-    </main>
+    </div>
   );
 }
