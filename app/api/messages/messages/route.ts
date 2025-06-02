@@ -8,7 +8,6 @@ export async function GET(req: NextRequest) {
   const threadId = searchParams.get("threadId");
   if (!threadId) return NextResponse.json([]);
   const messages = await getMessagesForThread(threadId);
-  // Only return encryptedContent and required fields
   return NextResponse.json(
     messages.map((m) => ({
       _id: m._id,

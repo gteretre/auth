@@ -38,15 +38,12 @@ export async function getAuthorById(
 ): Promise<import("./models").Author | null> {
   const db = await getDb();
   try {
-    // Try to find by 'id' (OAuth provider ID)
     let author = await db.collection("authors").findOne({ id });
-    // If not found, try by MongoDB _id
     if (!author && ObjectId.isValid(id)) {
       author = await db
         .collection("authors")
         .findOne({ _id: new ObjectId(id) });
     }
-    // Use mapAuthor to ensure correct type
     return author ? mapAuthor(author as RawAuthor) : null;
   } catch (error) {
     console.error("Error in getAuthorById:", error);
@@ -62,7 +59,6 @@ export async function getAuthorByEmail(
   const db = await getDb();
   try {
     const author = await db.collection("authors").findOne({ email });
-    // Use mapAuthor to ensure correct type
     return author ? mapAuthor(author as RawAuthor) : null;
   } catch (error) {
     console.error("Error in getAuthorByEmail:", error);
@@ -78,7 +74,6 @@ export async function getAuthorByUsername(
   const db = await getDb();
   try {
     const author = await db.collection("authors").findOne({ username });
-    // Use mapAuthor to ensure correct type
     return author ? mapAuthor(author as RawAuthor) : null;
   } catch (error) {
     console.error("Error in getAuthorByUsername:", error);
@@ -120,7 +115,6 @@ export async function getMessagesForThread(
     _id: m._id.toString(),
     threadId: m.threadId,
     authorId: m.authorId,
-    content: m.content,
     encryptedContent: m.encryptedContent,
     createdAt: m.createdAt instanceof Date ? m.createdAt : new Date(m.createdAt)
   }));
