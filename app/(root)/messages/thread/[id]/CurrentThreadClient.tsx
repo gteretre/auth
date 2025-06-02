@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
+import { encryptMessage, decryptMessage, getThreadEncryptionKey } from '@/lib/encryption';
 
 interface User {
   _id: string;
@@ -21,16 +22,35 @@ export default function CurrentThreadClient({
   const [messages, setMessages] = useState<any[]>([]);
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
+  const [encryptionKey, setEncryptionKey] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Fetch encryption key on mount
+  useEffect(() => {
+    getThreadEncryptionKey(threadId)
+        .then(setEncryptionKey)
+        .catch(console.error);
+  }, [threadId]);
+
 
   // Live polling for messages
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    const fetchMessages = () => {
-      fetch(`/api/messages/messages?threadId=${threadId}`)
-        .then((res) => res.json())
-        .then(setMessages);
+    const fetchMessages = async () => {
+      try {
+        const res = await fetch(`/api/messages/messages?threadId=${threadId}`);
+        const msgs = await res.json();
+        // Decrypt all messages
+        const decryptedMsgs = msgs.map((msg: any) => ({
+          ...msg,
+          content: decryptMessage(msg.content, { encryptionKey })
+        }));
+        setMessages(decryptedMsgs);
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+      }
     };
+
     fetchMessages();
     interval = setInterval(fetchMessages, 10_000);
     return () => clearInterval(interval);
@@ -45,21 +65,29 @@ export default function CurrentThreadClient({
 
   async function sendMessage() {
     setLoading(true);
+    //encrypt message
+    const encryptedContent = encryptMessage(content, encryptionKey);
     await fetch("/api/messages/messages", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ threadId, content })
+      body: JSON.stringify({
+        threadId,
+        encryptedContent
+      })
     });
     setContent("");
-    fetch(`/api/messages/messages?threadId=${threadId}`)
-      .then((res) => res.json())
-      .then((msgs) => {
-        setMessages(msgs);
-        setTimeout(
+    // Fetch and decrypt updated messages
+    const res = await fetch(`/api/messages/messages?threadId=${threadId}`);
+    const msgs = await res.json();
+    const decryptedMsgs = msgs.map((msg: any) => ({
+      ...msg,
+      content: decryptMessage(msg.encryptedContent, { encryptionKey })  // Changed from content to encryptedContent
+    }));
+    setMessages(decryptedMsgs);
+    setTimeout(
           () => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }),
           100
         );
-      });
     setLoading(false);
   }
 

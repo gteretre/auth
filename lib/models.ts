@@ -16,6 +16,7 @@ export interface Thread {
   userIds: [string, string];
   createdAt: Date;
   lastMessage?: string;
+  encryptionKey: string;
 }
 
 export interface Message {
@@ -23,5 +24,6 @@ export interface Message {
   threadId: string;
   authorId: string;
   content: string;
+  encryptedContent: string;
   createdAt: Date;
 }
