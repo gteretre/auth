@@ -26,7 +26,8 @@ export async function updateAuthor() {
 
 export async function createThread(
   authorUsername: string,
-  receiverUsername: string
+  receiverUsername: string,
+  encryptionKey?: string
 ) {
   const db = await getDb();
   const author = await getAuthorByUsername(authorUsername);
@@ -34,7 +35,8 @@ export async function createThread(
   if (!author || !receiver) throw new Error("User not found");
   const threadData = {
     userIds: [author._id, receiver._id],
-    createdAt: new Date()
+    createdAt: new Date(),
+    ...(encryptionKey ? { encryptionKey } : {})
   };
   const result = await db.collection("threads").insertOne(threadData);
   return {
@@ -52,7 +54,8 @@ export async function deleteThread(threadId: string) {
 export async function createMessage(
   threadId: string,
   authorUsername: string,
-  content: string
+  content: string,
+  encryptedContent: string
 ) {
   const db = await getDb();
   const author = await getAuthorByUsername(authorUsername);
@@ -61,6 +64,7 @@ export async function createMessage(
     threadId,
     authorId: author._id,
     content,
+    encryptedContent,
     createdAt: new Date()
   };
   const result = await db.collection("messages").insertOne(messageData);

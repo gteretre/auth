@@ -1,7 +1,11 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import { encryptMessage, decryptMessage, getThreadEncryptionKey } from '@/lib/encryption';
+import {
+  encryptMessage,
+  decryptMessage,
+  getThreadEncryptionKey
+} from "@/lib/encryption";
 
 interface User {
   _id: string;
@@ -27,34 +31,46 @@ export default function CurrentThreadClient({
 
   // Fetch encryption key on mount
   useEffect(() => {
+    setEncryptionKey(null); // Reset before fetching
     getThreadEncryptionKey(threadId)
-        .then(setEncryptionKey)
-        .catch(console.error);
+      .then((key) => {
+        if (key && typeof key === "string" && key.length > 0) {
+          setEncryptionKey(key);
+        } else {
+          setEncryptionKey(null);
+        }
+      })
+      .catch((err) => {
+        setEncryptionKey(null);
+        console.error(err);
+      });
   }, [threadId]);
-
 
   // Live polling for messages
   useEffect(() => {
     let interval: NodeJS.Timeout;
     const fetchMessages = async () => {
+      if (!encryptionKey) return; // Don't fetch/decrypt if key is not ready
       try {
         const res = await fetch(`/api/messages/messages?threadId=${threadId}`);
         const msgs = await res.json();
-        // Decrypt all messages
+        // Decrypt all messages using encryptionKey
         const decryptedMsgs = msgs.map((msg: any) => ({
           ...msg,
-          content: decryptMessage(msg.content, { encryptionKey })
+          content: encryptionKey
+            ? decryptMessage(msg.encryptedContent || msg.content, encryptionKey)
+            : ""
         }));
         setMessages(decryptedMsgs);
       } catch (error) {
-        console.error('Error fetching messages:', error);
+        console.error("Error fetching messages:", error);
       }
     };
 
     fetchMessages();
     interval = setInterval(fetchMessages, 10_000);
     return () => clearInterval(interval);
-  }, [threadId]);
+  }, [threadId, encryptionKey]);
 
   // Scroll to bottom only on initial load or when sending a message
   useEffect(() => {
@@ -64,14 +80,16 @@ export default function CurrentThreadClient({
   }, []); // Only on mount
 
   async function sendMessage() {
+    if (!encryptionKey || !content) return;
     setLoading(true);
-    //encrypt message
+    // Encrypt message
     const encryptedContent = encryptMessage(content, encryptionKey);
     await fetch("/api/messages/messages", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         threadId,
+        content, // plain text for DB verification
         encryptedContent
       })
     });
@@ -79,15 +97,25 @@ export default function CurrentThreadClient({
     // Fetch and decrypt updated messages
     const res = await fetch(`/api/messages/messages?threadId=${threadId}`);
     const msgs = await res.json();
-    const decryptedMsgs = msgs.map((msg: any) => ({
-      ...msg,
-      content: decryptMessage(msg.encryptedContent, { encryptionKey })  // Changed from content to encryptedContent
-    }));
+    const decryptedMsgs = msgs.map((msg: any) => {
+      if (msg.encryptedContent && typeof msg.encryptedContent === "string") {
+        try {
+          return {
+            ...msg,
+            content: decryptMessage(msg.encryptedContent, encryptionKey)
+          };
+        } catch (e) {
+          console.error("Failed to decrypt message:", e);
+          return { ...msg, content: "[Failed to decrypt]" };
+        }
+      }
+      return { ...msg, content: "" };
+    });
     setMessages(decryptedMsgs);
     setTimeout(
-          () => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }),
-          100
-        );
+      () => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }),
+      100
+    );
     setLoading(false);
   }
 
@@ -153,12 +181,15 @@ export default function CurrentThreadClient({
         <input
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="Type a message"
+          placeholder={
+            encryptionKey ? "Type a message" : "Loading encryption..."
+          }
           className="chat-input"
+          disabled={!encryptionKey}
         />
         <button
           onClick={sendMessage}
-          disabled={loading || !content}
+          disabled={loading || !content || !encryptionKey}
           className="chat-send-btn"
         >
           Send

@@ -102,7 +102,8 @@ export async function getThreadsForUser(username: string): Promise<Thread[]> {
     userIds: t.userIds,
     createdAt:
       t.createdAt instanceof Date ? t.createdAt : new Date(t.createdAt),
-    lastMessage: t.lastMessage || ""
+    lastMessage: t.lastMessage || "",
+    encryptionKey: t.encryptionKey || undefined
   }));
 }
 
@@ -120,6 +121,28 @@ export async function getMessagesForThread(
     threadId: m.threadId,
     authorId: m.authorId,
     content: m.content,
+    encryptedContent: m.encryptedContent,
     createdAt: m.createdAt instanceof Date ? m.createdAt : new Date(m.createdAt)
   }));
+}
+
+export async function getThreadById(threadId: string): Promise<Thread | null> {
+  const db = await getDb();
+  try {
+    const t = await db
+      .collection("threads")
+      .findOne({ _id: new ObjectId(threadId) });
+    if (!t) return null;
+    return {
+      _id: t._id.toString(),
+      userIds: t.userIds,
+      createdAt:
+        t.createdAt instanceof Date ? t.createdAt : new Date(t.createdAt),
+      lastMessage: t.lastMessage || "",
+      encryptionKey: t.encryptionKey || undefined
+    };
+  } catch (error) {
+    console.error("Error in getThreadById:", error);
+    return null;
+  }
 }

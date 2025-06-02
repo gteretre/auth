@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { getThreadsForUser } from "@/lib/queries";
+import { getThreadsForUser, getThreadById } from "@/lib/queries";
 import { deleteThread } from "@/lib/mutations";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  // Optionally implement get single thread if needed
-  return NextResponse.json({});
+  const thread = await getThreadById(params.id);
+  if (!thread) {
+    return NextResponse.json({ error: "Thread not found" }, { status: 404 });
+  }
+  console.log("Thread fetched:", thread);
+  return NextResponse.json(thread);
 }
 
 export async function DELETE(

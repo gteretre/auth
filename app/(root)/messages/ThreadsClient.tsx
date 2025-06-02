@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
-import { generateEncryptionKey } from '@/lib/encryption';
+import { generateEncryptionKey } from "@/lib/encryption";
 
 interface User {
   username: string;
@@ -14,6 +14,7 @@ interface Thread {
   createdAt: string;
   lastMessage?: string;
   otherUser?: User;
+  encryptionKey?: string;
 }
 
 export default function ThreadsClient({ username }: { username: string }) {
@@ -71,7 +72,7 @@ export default function ThreadsClient({ username }: { username: string }) {
   async function createThread() {
     setLoading(true);
     const encryptionKey = generateEncryptionKey();
-    console.log('Generated encryption key:', encryptionKey);
+    console.error("Generated encryption key:", encryptionKey);
     const response = await fetch("/api/messages/threads", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -83,7 +84,7 @@ export default function ThreadsClient({ username }: { username: string }) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to create thread');
+      throw new Error(errorData.message || "Failed to create thread");
     }
 
     setReceiver("");
