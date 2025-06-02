@@ -12,7 +12,12 @@ export default async function HomePage() {
             <h1 className="mb-4 text-4xl font-extrabold tracking-tight text-primary lg:text-5xl">
               Przejdź do wiadomości
             </h1>
-            <Link href="/messages">Wiadomości</Link>
+            <Link
+              href="/messages"
+              className="inline-block rounded-lg bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 px-8 py-3 text-lg font-semibold text-white shadow-lg transition-transform duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-pink-300"
+            >
+              Wiadomości
+            </Link>
           </>
         ) : (
           <>
